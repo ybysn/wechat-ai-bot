@@ -1,0 +1,36 @@
+[Unit]
+Description=WeChat bot isolated Sender
+After=network.target wechat-bot-observer-consumer.service wechat-bot-observer-worker.service
+ConditionPathExists=/etc/wechat-ai-bot/automatic-reply.json
+ConditionPathExists=/etc/wechat-ai-bot/sender-settings.json
+StartLimitIntervalSec=0
+
+[Service]
+Type=exec
+User=wechat-sender
+Group=wechat-sender
+SupplementaryGroups=wechat-store
+WorkingDirectory=/opt/wechat-ai-bot
+Environment=PYTHONPATH=/opt/wechat-ai-bot/src
+Environment=PYTHONNOUSERSITE=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -P -u -m wechat_ai_bot.sender_service
+LoadCredential=native-token:/etc/wechat-ai-bot/sender-api-token
+UMask=0007
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/wechat-ai-bot/store /var/lib/wechat-ai-bot/sender
+InaccessiblePaths=/var/lib/wechat-ai-bot/observer
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+CapabilityBoundingSet=
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=40
+
+[Install]
+WantedBy=multi-user.target

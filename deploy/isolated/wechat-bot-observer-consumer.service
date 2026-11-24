@@ -1,0 +1,29 @@
+[Unit]
+Description=WX Chat Bot isolated event consumer (staged)
+After=network.target
+
+[Service]
+Type=simple
+User=wechat-observer
+Group=wechat-observer
+SupplementaryGroups=wechat-store
+WorkingDirectory=/opt/wechat-ai-bot
+Environment=PYTHONPATH=/opt/wechat-ai-bot/src
+Environment=PYTHONNOUSERSITE=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -P -u -m wechat_ai_bot.consumer --config /etc/wechat-ai-bot/observer.json
+UMask=0007
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/wechat-ai-bot/store /var/lib/wechat-ai-bot/observer
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+CapabilityBoundingSet=
+Restart=on-failure
+RestartPreventExitStatus=2
+RestartSec=5
+TimeoutStopSec=50

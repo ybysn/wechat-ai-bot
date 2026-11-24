@@ -1,0 +1,34 @@
+x-observer: &observer
+  image: wechat-ai-bot-observer:local
+  pull_policy: never
+  network_mode: host
+  user: "${WECHAT_BOT_UID:?Set WECHAT_BOT_UID to your Linux user ID}:${WECHAT_BOT_GID:?Set WECHAT_BOT_GID to your Linux group ID}"
+  init: true
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  volumes:
+    - type: bind
+      source: ./docker-data/config
+      target: /config
+      read_only: true
+      bind:
+        create_host_path: false
+    - type: bind
+      source: ./docker-data/state
+      target: /state
+      bind:
+        create_host_path: false
+
+services:
+  consumer:
+    <<: *observer
+    build: .
+    stop_grace_period: 50s
+
+  worker:
+    <<: *observer
+    command: ["python", "-m", "wechat_ai_bot.worker", "--config", "/config/config.json", "--run"]
+    stop_grace_period: 180s

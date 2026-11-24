@@ -1,0 +1,25 @@
+[Unit]
+Description=WX Chat Bot - Observe-Only Hydrator and AI Decision Worker
+Wants=agent-wechat-native.service wechat-bot-consumer.service
+After=agent-wechat-native.service wechat-bot-consumer.service
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=%h/apps/wechat-ai-bot
+Environment=PYTHONPATH=%h/apps/wechat-ai-bot/src
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -m wechat_ai_bot.worker --run
+Restart=on-failure
+RestartPreventExitStatus=2
+RestartSec=5
+TimeoutStopSec=180
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+
+[Install]
+WantedBy=default.target

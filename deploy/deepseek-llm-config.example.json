@@ -1,0 +1,13 @@
+{
+  "llm": {
+    "provider": "deepseek",
+    "deepseek": {
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-flash",
+      "api_key_file": "~/.config/wechat-ai-bot/deepseek-api-key",
+      "usage_log_file": "~/.local/share/wechat-ai-bot/deepseek-usage.jsonl",
+      "daily_request_limit": 50,
+      "timeout_seconds": 45
+    }
+  }
+}

@@ -1,0 +1,19 @@
+[Unit]
+Description=WeChat AI Bot local admin dashboard
+After=agent-wechat-native.service
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=exec
+WorkingDirectory=%h/apps/wechat-ai-bot
+Environment=PYTHONPATH=%h/apps/wechat-ai-bot/src
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -P -u -m wechat_ai_bot.admin
+UMask=0077
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

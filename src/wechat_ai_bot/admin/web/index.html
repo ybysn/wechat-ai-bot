@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="查看微信连接、模型和服务状态，编辑发送计划草稿。">
+  <title>微信机器人 · 管理后台</title>
+  <link rel="stylesheet" href="/admin.css">
+  <script src="/admin.js" defer></script>
+</head>
+<body>
+  <a class="skip-nav" href="#page-title">跳到页面内容</a>
+  <aside class="sidebar" data-menu-open="false">
+    <div class="sidebar-header">
+      <a class="brand" href="#overview" aria-label="微信机器人，返回运行概览">
+        <span class="brand-icon" aria-hidden="true"></span>
+        <span>微信机器人<small>管理后台</small></span>
+      </a>
+      <button id="menu-toggle" class="button secondary" type="button" aria-controls="sidebar-menu" aria-expanded="false">
+        <span class="icon icon-menu" aria-hidden="true"></span>菜单
+      </button>
+    </div>
+    <div id="sidebar-menu" class="sidebar-menu">
+      <nav aria-label="后台导航">
+        <div class="nav-group" role="group" aria-labelledby="runtime-nav">
+          <p id="runtime-nav" class="nav-label">运行</p>
+          <a href="#overview" aria-current="page"><span class="icon icon-grid" aria-hidden="true"></span>运行概览</a>
+          <a href="#services"><span class="icon icon-bars" aria-hidden="true"></span>服务状态</a>
+          <a href="#history"><span class="icon icon-lines" aria-hidden="true"></span>发送记录</a>
+        </div>
+        <div class="nav-group" role="group" aria-labelledby="settings-nav">
+          <p id="settings-nav" class="nav-label">配置</p>
+          <a href="#sending"><span class="icon icon-group" aria-hidden="true"></span>目标群</a>
+          <a href="#reply"><span class="icon icon-chat" aria-hidden="true"></span>自动回复</a>
+          <a href="#checkin"><span class="icon icon-check" aria-hidden="true"></span>签到设置</a>
+          <a href="#special"><span class="icon icon-clock" aria-hidden="true"></span>定时消息</a>
+          <a href="#model"><span class="icon icon-model" aria-hidden="true"></span>模型配置</a>
+        </div>
+      </nav>
+      <button id="lock" class="lock-button" type="button"><span class="icon icon-lock" aria-hidden="true"></span>锁定后台</button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="page-header">
+      <div>
+        <h1 id="page-title" tabindex="-1">运行概览</h1>
+        <p id="runtime-summary"><span id="refreshed">等待连接本机后台</span></p>
+      </div>
+      <button id="refresh" class="button secondary" type="button"><span class="icon icon-refresh" aria-hidden="true"></span>刷新状态</button>
+      <span id="draft-indicator" class="pill draft-indicator" hidden>本机配置草稿</span>
+    </header>
+    <p id="status-error" class="notice error" role="status" hidden></p>
+
+    <section id="overview" class="overview" aria-label="关键运行状态" data-page>
+      <article class="pipeline-panel">
+        <div class="pipeline-heading">
+          <h2>运行链路</h2>
+          <p id="pipeline">待检查</p>
+          <a class="pipeline-link" href="#services">查看服务状态<span aria-hidden="true"> ↗</span></a>
+        </div>
+        <dl class="pipeline-steps">
+          <div class="pipeline-step"><dt>消息接收</dt><dd id="consumer-step" data-state="unknown">待检查</dd></div>
+          <div class="pipeline-step"><dt>模型决策</dt><dd id="worker-step" data-state="unknown">待检查</dd></div>
+          <div class="pipeline-step"><dt>微信发送</dt><dd id="sender-step" data-state="unknown">待检查</dd></div>
+        </dl>
+      </article>
+      <div class="summary">
+        <article id="connection-card" class="summary-card">
+          <div class="card-title">
+            <span class="metric-icon"><span class="icon icon-chat" aria-hidden="true"></span></span>
+            <h2>微信账号</h2><span id="connection-light" class="status-light" aria-hidden="true"></span>
+          </div>
+          <p class="metric" id="connection">待检查</p>
+          <p id="connection-detail">等待读取登录状态</p>
+          <div class="connection-action">
+            <button id="wechat-login" class="button secondary" type="button" hidden>登录微信</button>
+            <p id="wechat-login-result" role="status" hidden></p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="card-title"><span class="metric-icon"><span class="icon icon-send" aria-hidden="true"></span></span><h2>微信发送</h2></div>
+          <p class="metric" id="sending-mode">待检查</p>
+          <p id="sending-detail" hidden></p>
+          <p id="policy">等待读取策略</p>
+        </article>
+        <article class="summary-card">
+          <div class="card-title"><span class="metric-icon"><span class="icon icon-model" aria-hidden="true"></span></span><h2>决策模型</h2></div>
+          <p class="metric model-metric" id="active-model">待检查</p>
+          <p id="active-model-source">等待读取配置</p>
+        </article>
+      </div>
+      <article class="panel activity-panel">
+        <div class="panel-heading"><h2>消息活动</h2><a class="text-link" href="#history">查看发送记录<span aria-hidden="true"> ↗</span></a></div>
+        <dl class="details">
+          <div><dt>最近群消息确认（ACK）</dt><dd id="last-ack">待检查</dd></div>
+          <div><dt>最近保存决策</dt><dd id="last-decision">待检查</dd></div>
+          <div><dt>待发送 / 待核对</dt><dd id="outbox">待检查</dd></div>
+        </dl>
+      </article>
+    </section>
+
+    <section id="services" class="panel services-panel" aria-labelledby="page-title" data-page hidden>
+      <div class="table-wrap">
+        <table class="service-table">
+          <thead><tr><th scope="col">服务</th><th scope="col">当前状态</th><th scope="col">运行时间</th><th scope="col">开机启动</th><th scope="col">重启次数</th></tr></thead>
+          <tbody id="service-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <form id="sending" class="panel settings-panel" autocomplete="off" aria-labelledby="page-title" data-page data-settings hidden>
+      <p class="form-intro">自动回复、签到和所有定时消息共用此目标群。</p>
+      <div class="target-group">
+        <label>全局目标群
+          <span class="select-wrap">
+            <select name="targetGroupId" aria-describedby="configured-group group-list-state">
+              <option value="">沿用部署配置</option>
+            </select>
+          </span>
+        </label>
+        <div class="group-info">
+          <div>
+            <p id="configured-group" class="section-detail">等待读取当前配置</p>
+            <p id="group-list-state" class="section-detail" role="status">解锁后读取微信群列表。</p>
+          </div>
+          <button id="refresh-groups" class="button secondary" type="button">刷新群列表</button>
+        </div>
+      </div>
+      <div class="draft-footer">
+        <p role="status">配置保存在本机，部署后生效。</p>
+        <button class="button primary" type="submit" disabled>保存配置</button>
+      </div>
+    </form>
+
+    <form id="reply" class="panel settings-panel" autocomplete="off" aria-labelledby="page-title" data-page data-settings hidden>
+      <p class="form-intro">设置自动回复时段和频率上限。时段使用北京时间。</p>
+      <label class="check-row"><span>限定自动回复时段</span><input type="checkbox" name="replyWindowEnabled"></label>
+      <div class="time-grid">
+        <label>开始时间<input type="time" name="replyStart" value="09:00"></label>
+        <label>结束时间<input type="time" name="replyEnd" value="22:00"></label>
+      </div>
+      <fieldset class="limits-grid">
+        <legend>回复频率上限</legend>
+        <label>每小时<input type="number" name="replyHourly" min="1" max="2000" value="30" required></label>
+        <label>每日<input type="number" name="replyDaily" min="1" max="2000" value="360" required></label>
+        <label>回复间隔（秒）<input type="number" name="replyInterval" min="0" max="86400" value="120" required></label>
+      </fieldset>
+      <p id="cooldown" class="section-detail limit-note"></p>
+      <div class="draft-footer">
+        <p role="status">配置保存在本机，部署后生效。</p>
+        <button class="button primary" type="submit" disabled>保存配置</button>
+      </div>
+    </form>
+
+    <form id="checkin" class="panel settings-panel" autocomplete="off" aria-labelledby="page-title" data-page data-settings hidden>
+      <p class="form-intro">北京时间 · 默认签到时间 <span id="reference-checkin">09:00</span></p>
+      <label class="check-row"><span>定时签到</span><input type="checkbox" name="checkinEnabled"></label>
+      <label>签到时间<input type="time" name="checkinTime" value="09:00"></label>
+      <div class="draft-footer">
+        <p role="status">配置保存在本机，部署后生效。</p>
+        <button class="button primary" type="submit" disabled>保存配置</button>
+      </div>
+    </form>
+
+    <form id="special" class="panel settings-panel" autocomplete="off" aria-labelledby="page-title" data-page data-settings hidden>
+      <div class="panel-heading page-actions">
+        <p id="scheduled-group" class="section-detail">沿用全局目标群，发送时间使用北京时间。</p>
+        <button id="add-message-plan" class="button secondary" type="button"><span class="icon icon-plus" aria-hidden="true"></span>新增定时消息</button>
+      </div>
+      <p id="empty-message-plans" class="empty-state">尚无定时消息。</p>
+      <div id="message-plans"></div>
+      <div class="draft-footer">
+        <p role="status">配置保存在本机，部署后生效。</p>
+        <button class="button primary" type="submit" disabled>保存配置</button>
+      </div>
+    </form>
+
+    <form id="model" class="panel settings-panel" autocomplete="off" aria-labelledby="page-title" data-page data-settings hidden>
+      <p id="limits" class="form-intro">当前模型配额待检查</p>
+      <div class="field-grid">
+        <label>模型提供方
+          <span class="select-wrap">
+            <select name="provider"><option value="deepseek">DeepSeek</option><option value="ollama">Ollama</option></select>
+          </span>
+        </label>
+        <label>模型名称<input name="model" value="deepseek-flash" maxlength="80" spellcheck="false" required></label>
+      </div>
+      <fieldset class="limits-grid">
+        <legend>DeepSeek 调用限额</legend>
+        <label>UTC 日上限<input type="number" name="modelDaily" min="1" max="2000" value="50" required></label>
+        <label>每 60 秒上限<input type="number" name="modelPerMinute" min="1" max="60" value="3" required></label>
+        <label>请求间隔（秒）<input type="number" name="modelInterval" min="0" max="120" value="20" required></label>
+      </fieldset>
+      <div class="draft-footer">
+        <p role="status">配置保存在本机，部署后生效。</p>
+        <button class="button primary" type="submit" disabled>保存配置</button>
+      </div>
+    </form>
+
+    <section id="history" class="panel" aria-labelledby="page-title" data-page hidden>
+      <div class="panel-heading page-actions">
+        <p id="history-state" class="section-detail" role="status">等待读取发送记录。</p>
+        <div class="history-actions">
+          <button id="read-history" class="button secondary" type="button">刷新记录</button>
+          <button id="export-history" class="button secondary" type="button" hidden>读取生产记录</button>
+        </div>
+      </div>
+      <ol id="history-list" class="history-list"></ol>
+    </section>
+  </main>
+
+  <template id="message-plan-template">
+    <fieldset class="message-plan" data-plan>
+      <legend data-plan-name>定时计划</legend>
+      <div class="panel-heading">
+        <label class="check-row"><span>启用计划</span><input type="checkbox" name="enabled" checked></label>
+        <button class="button subtle-danger" type="button" data-remove-plan>删除此计划</button>
+      </div>
+      <div class="limits-grid special-time">
+        <label>重复方式<span class="select-wrap"><select name="cadence"><option value="once">仅一次</option><option value="daily">每天</option></select></span></label>
+        <label data-plan-date>日期<input type="date" name="date"></label>
+        <label>发送时间<input type="time" name="time" value="09:00" required></label>
+      </div>
+      <label>消息正文<textarea name="text" maxlength="4000" rows="3" required></textarea></label>
+      <p data-plan-preview class="section-detail limit-note" role="status">保存后查看预定时间。</p>
+    </fieldset>
+  </template>
+
+  <dialog id="unlock" aria-labelledby="unlock-title">
+    <form id="unlock-form" autocomplete="off">
+      <span class="brand-icon" aria-hidden="true"></span>
+      <h2 id="unlock-title">解锁管理后台</h2>
+      <p>在 Ubuntu 桌面确认访问，或输入本机访问密钥。</p>
+      <button id="desktop-unlock" class="button primary" type="button">在 Ubuntu 桌面确认</button>
+      <label>访问密钥<input id="access-key" type="password" name="accessKey" required autofocus autocomplete="current-password"></label>
+      <p id="unlock-error" class="unlock-error" role="alert" hidden></p>
+      <button id="unlock-button" class="button secondary" type="submit">用密钥解锁</button>
+    </form>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,138 @@
+{
+  "commit": "d0f3677dd997e22318550b911586ad0d5f067ae5",
+  "files": [
+    {
+      "path": "docs/src/content/docs/how-it-works/sends.mdx",
+      "bytes": 3347,
+      "git_blob": "2ae404f5ad6e7fe13abcdf14884f6ca24ff0edec",
+      "sha256": "8875e879939a4219d0b1065fe04b2cd4f9153947a7062bb01fdd25586ea264ee"
+    },
+    {
+      "path": "docs/src/content/docs/reference/tokens.mdx",
+      "bytes": 1961,
+      "git_blob": "861aef20df9be118ccc6c22f947925e74ff04191",
+      "sha256": "461681624d28c7effa3b14bc1ba9c8a7a693efce9979b6b3617e8f5726b6d9c7"
+    },
+    {
+      "path": "docs/src/content/docs/use/api.mdx",
+      "bytes": 17342,
+      "git_blob": "0f83503e2c035a1d28db424f9b02a39e4495cd31",
+      "sha256": "c65867183081edf29a622e9abba6ec790c7bf431ec5dd9f69759e60107e46bf5"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-api/src/actions.rs",
+      "bytes": 17077,
+      "git_blob": "775b23da4b9837cc112fe1bdcac494ad2e2e77a4",
+      "sha256": "97dfd2055bc2cda7ae37320aeaa7a1bf30201600df734c6040275228b16c528f"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-api/src/contracts.rs",
+      "bytes": 61230,
+      "git_blob": "cc813e4868b38c0345ffae35bef665bdf3cc9656",
+      "sha256": "936604d56c28c321dd1ea08740ec32978bd5b79f454b21d44b59fd78dc1e08f5"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-api/src/http_interface_tests.rs",
+      "bytes": 30134,
+      "git_blob": "064052c8de76cf3c948720e756683756d74c3c2f",
+      "sha256": "29ec314375e4fb32771a6a5caa4a61f52792f682fb9b05bfe146bb019f8affb2"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-api/src/http_route_table.rs",
+      "bytes": 58652,
+      "git_blob": "349203ce11c8db25b5e4713e90fa78487bfc576b",
+      "sha256": "15b46deb5cd3aa0c6e7ad315cbaba401095e3fd782c0b7577b420663f58ce467"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-api/src/lib.rs",
+      "bytes": 107287,
+      "git_blob": "500609b55562068966f9ea901722a3f262285769",
+      "sha256": "deeba81841e4d902a86e92c752e6165062884dfb8b70ea1f48733b22187b12eb"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-api/src/media.rs",
+      "bytes": 31481,
+      "git_blob": "aa2632e43652535830d1fc5eb6a7b332523d17e9",
+      "sha256": "fc20a55fd975c40bd12a5b4d7c761f42b9eb5e697cf9bea50dd43039c7f14b1b"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-core/src/lib.rs",
+      "bytes": 1273,
+      "git_blob": "ea319691b2c7c021fd3ee487e0d2120dbe2ed964",
+      "sha256": "cda06c238fcbc1d2b2052d58e1328f93edc927bdc08d46487460d6ca711faa34"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-core/src/media.rs",
+      "bytes": 294655,
+      "git_blob": "d24fd4dac30b6511050d91ee86fdfb2f266f65ae",
+      "sha256": "f4f6a0655f42b9bffed74bc9f970ffcb96b172f44fcaf5183ef09d68a73b01bd"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-core/src/runtime.rs",
+      "bytes": 192673,
+      "git_blob": "fc652f0598d4f23da117ad3815a635908eb1d5df",
+      "sha256": "cb2ff96d79a2ce44b8fa65683905c2fc6ab686c6f9c9dcab178920b4e9cc1018"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-core/src/upstream.rs",
+      "bytes": 17429,
+      "git_blob": "06612a903c87aa0b94c3f00a4588bd57ccf6f499",
+      "sha256": "c63ee5323ff0c425cc9967d47f0a59ee3bf41003e727d0d91328f64551a1400f"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-store/src/lib.rs",
+      "bytes": 17298,
+      "git_blob": "0f9691018c1ea1a30c560b78605d269c74e335ce",
+      "sha256": "1483e6d064ae289b20ca01f0cc53f2ecfc3209698464206c53fd670db4d6d35d"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-store/src/media.rs",
+      "bytes": 92481,
+      "git_blob": "46b53af9f7a2df8091f73ea1e51540b052aeee5e",
+      "sha256": "1ac1105d5ac421d530fc9abfff852d21515dcfbe3c4e97b549f75d82e6ca8d5f"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-store/src/operations.rs",
+      "bytes": 56123,
+      "git_blob": "41cc3f5ae07b910899fd032ce569339a32322188",
+      "sha256": "b70854f78d0ac935aae88c86cf6dc9df830a9b085222027a2986cffe73e3a762"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-store/src/outbox.rs",
+      "bytes": 11840,
+      "git_blob": "625edd7fd8cafca535a3467c6cf03bd29cdf1a9e",
+      "sha256": "c3b5f0a29674a07f179642f4943a1e624720a41ff705f031913b128baaa639d5"
+    },
+    {
+      "path": "packages/native-client-rust/crates/wechat-store/src/retention.rs",
+      "bytes": 109215,
+      "git_blob": "b612dbcc86fa8f31ee175c00f711a0117728a7b3",
+      "sha256": "89b33e6f64e90d9f32a00d574d7c9145bed6a18155c27f020e32bdcaa322cb82"
+    },
+    {
+      "path": "packages/shared/src/native.generated.ts",
+      "bytes": 62997,
+      "git_blob": "8f0d1d7daa82f9ec43d3840e4e34e282fe181ef8",
+      "sha256": "eeff0088990d7d54448f730f899fd15542ba114c4577eba8ca7978edf882858e"
+    }
+  ],
+  "repository": "https://github.com/thisnick/agent-wechat",
+  "release": "https://github.com/thisnick/agent-wechat/releases/tag/v2.9.0",
+  "release_assets": [
+    {
+      "name": "wx-v2.9.0-checksums.json",
+      "sha256": "1dd957ed8d57eeade20e40aa59830af147c17ba7117474bb3eddb98fbaf09f36"
+    },
+    {
+      "name": "wx-v2.9.0-linux-x64-gnu",
+      "sha256": "477acc93d6a13c6c59fb54bf253f5e35825f9ef46991aec3efa10971c3373d49"
+    }
+  ],
+  "verification": {
+    "source_git_blobs_checked": true,
+    "local_binary_matches_official_asset": true,
+    "local_checksums_matches_official_asset": true,
+    "running_daemon_matches_local_binary": true,
+    "production_success_receipt_observed": false
+  }
+}

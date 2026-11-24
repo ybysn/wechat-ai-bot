@@ -1,0 +1,94 @@
+--- a/src/wechat_ai_bot/sender_http_contract.py
++++ b/src/wechat_ai_bot/sender_http_contract.py
+@@ -2,14 +2,16 @@
+ 
+ The Worker never imports this module and no code here invokes urlopen() or a
+ transport. Constructing a request MUST NOT be confused with authorizing send.
+-Before a real Sender is built, receipt schemas and runtime permissions must be
+-verified against agent-wechat v2.9.0; an unverified receipt is NOT success.
++The v2.9.0 source audit is recorded in docs/agent-wechat-v2.9.0-protocol-audit.md.
++Its native receipt lacks the echo fields required below; this inspector still
++serves the synthetic contract and must NOT mark a native receipt successful.
+ """
+ 
+ from __future__ import annotations
+ 
+ from dataclasses import dataclass
+ import json
++from unicodedata import category
+ from urllib.parse import quote, urlencode
+ from urllib.request import Request
+ 
+@@ -27,6 +29,25 @@
+         or any(ord(c) < 32 or ord(c) == 127 for c in value)
+     ):
+         raise SendContractError(f"Invalid {name}")
++    return value
++
++
++def _idempotency_key(value):
++    # v2.9.0 wechat-api::idempotency_key: at most 200 ASCII graphic/space bytes.
++    value = _id(value, "idempotency key")
++    if len(value) > 200 or any(not 32 <= ord(c) <= 126 for c in value):
++        raise SendContractError("Invalid idempotency key")
++    return value
++
++
++def _destination(value):
++    value = _id(value, "thread ID")
++    try:
++        size = len(value.encode("utf-8"))
++    except UnicodeError as exc:
++        raise SendContractError("Invalid thread ID") from exc
++    if size > 256 or any(c.isspace() or category(c) == "Cc" for c in value):
++        raise SendContractError("Invalid thread ID")
+     return value
+ 
+ 
+@@ -59,8 +80,8 @@
+     """
+     root = _root(base_url)
+     account = quote(_id(account_id, "account ID"), safe="")
+-    thread = _id(thread_id, "thread ID")
+-    key = _id(idempotency_key, "idempotency key")
++    thread = _destination(thread_id)
++    key = _idempotency_key(idempotency_key)
+     if not isinstance(text, str) or not text.strip() or len(text) > 4000:
+         raise SendContractError("Invalid text length")
+     headers = _auth_headers(token)
+@@ -83,7 +104,7 @@
+     """Build a read-only same-key receipt lookup; never invoke it here."""
+     root = _root(base_url)
+     account = quote(_id(account_id, "account ID"), safe="")
+-    key = _id(idempotency_key, "idempotency key")
++    key = _idempotency_key(idempotency_key)
+     query = urlencode({"key": key})
+     return Request(
+         f"{root}/accounts/{account}/sends/by-idempotency-key?{query}",
+@@ -106,9 +127,11 @@
+ ) -> InspectedReceipt:
+     """Fail closed until remote record proves key + exact content/target.
+ 
+-    The public API guarantees idempotency by key, but its docs do not guarantee
+-    every HTTP response contains account, target, key and text echoes. Without
+-    those fields, a caller must lookup/resolve the remote record, NOT mark sent.
++    The audited v2.9.0 native record has destination, not threadId, and has no
++    text/idempotencyKey echoes. A same-key lookup returns that same shape, so it
++    cannot supply the missing proof for this synthetic inspector. Production
++    reconciliation needs a separate design binding the authenticated lookup to
++    the persisted request and approval. Never fabricate echoes from local data.
+     Even a verified `accepted` is server acceptance, not user delivery.
+     """
+     for name, value in (
+@@ -122,7 +145,10 @@
+     if not isinstance(payload, dict):
+         return InspectedReceipt("unknown", None, False, False, "invalid_receipt")
+     state = payload.get("state")
+-    if state not in ("accepted", "failed", "needs_review", "cancelled", "queued", "sending"):
++    if state not in (
++        "accepted", "failed", "needs_review", "cancelled", "queued",
++        "submitting", "sending",  # Native state; legacy synthetic state.
++    ):
+         state = "unknown"
+     remote_id = payload.get("id")
+     if not isinstance(remote_id, str) or not remote_id:

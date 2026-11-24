@@ -1,0 +1,13 @@
+**
+!src
+src/*
+!src/wechat_ai_bot
+src/wechat_ai_bot/*
+!src/wechat_ai_bot/*.py
+
+# Keep the shared policy contracts used by Storage and exclude Sender entry points.
+src/wechat_ai_bot/sender_*
+!src/wechat_ai_bot/sender_automatic_policy.py
+!src/wechat_ai_bot/sender_http_contract.py
+!src/wechat_ai_bot/sender_role_boundary.py
+src/wechat_ai_bot/receive_events.py
